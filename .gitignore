@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# uv / virtual environment
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets
+.env
+
+# Agent runtime memory (per-learner)
+data/
+
+# macOS
+.DS_Store

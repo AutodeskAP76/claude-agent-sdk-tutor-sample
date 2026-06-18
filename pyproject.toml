@@ -1,0 +1,17 @@
+[project]
+name = "tutor"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "claude-agent-sdk>=0.2.104",
+    "gradio>=6.19.0",
+    "ipykernel>=7.3.0",
+    "ipywidgets>=8.1.8",
+]
+
+[dependency-groups]
+dev = [
+    "playwright>=1.60.0",
+]
