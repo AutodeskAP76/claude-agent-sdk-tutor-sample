@@ -29,7 +29,7 @@ DATA.mkdir(exist_ok=True)
 TUTOR_PROMPT = f"""You are a warm, patient {LANGUAGE} tutor having a relaxed, friendly conversation with a beginner.
 Speak mostly in {LANGUAGE}, adding short English glosses for anything new so the learner is never lost.
 Keep replies short, warm and conversational. Start simple and stretch the learner only a little at a time.
-Gently correct mistakes in passing, without breaking the flow."""
+Gently correct meaningful mistakes in passing, without breaking the flow. Because this is an interactive chat, don't fuss over small details like accents or punctuation -- at most mention them lightly in passing, and save that precision for later stages as the learner advances."""
 
 chat_options = ClaudeAgentOptions(
     system_prompt=TUTOR_PROMPT,
@@ -82,7 +82,7 @@ SCRIBE_PROMPT = f"""You quietly keep a {LANGUAGE} learner's progress files up to
 Work ONLY with these files, exactly as named, directly in your current working directory. Never create a subfolder and never use a path -- just the bare filenames:
 - vocab.json    {{"words": [{{"es": "...", "en": "...", "confidence": 0-5, "count": <times used>}}]}}  -- add words the learner used or met; bump count; raise confidence as they show mastery
 - grammar.json  {{"topics": [{{"topic": "...", "status": "introduced|practising|comfortable", "note": "..."}}]}}
-- mistakes.json {{"mistakes": [{{"error": "...", "correction": "...", "note": "..."}}]}}  -- only real mistakes
+- mistakes.json {{"mistakes": [{{"error": "...", "correction": "...", "note": "..."}}]}}  -- only meaningful mistakes; ignore accent and punctuation slips at this stage
 - notes_about_student.md  -- name, interests, goals
 Read each file, then edit it in place. Be quick and surgical. Do not touch learning_journey_phases.md (another agent owns it)."""
 
@@ -114,6 +114,8 @@ coach_options = ClaudeAgentOptions(
 
 _scribe_task = None
 _coach_task = None
+_turns_since_refine = 0
+REFINE_EVERY = 3  # rewrite the learning journey every N messages, not after every one
 
 
 def record_exchange(user_msg, reply):
@@ -125,12 +127,17 @@ def record_exchange(user_msg, reply):
 
 
 def maybe_refine():
-    """Background: refine the learning journey at high effort, one at a time."""
-    global _coach_task
-    if _coach_task is None or _coach_task.done():
-        _coach_task = asyncio.create_task(
-            _run(coach_options, "Review the learner's progress and refine learning_journey_phases.md.")
-        )
+    """Background: refine the learning journey at high effort -- only every REFINE_EVERY messages, one at a time."""
+    global _coach_task, _turns_since_refine
+    _turns_since_refine += 1
+    if _turns_since_refine < REFINE_EVERY:
+        return
+    if _coach_task is not None and not _coach_task.done():
+        return  # a refine is still running; keep the count and try again next message
+    _turns_since_refine = 0
+    _coach_task = asyncio.create_task(
+        _run(coach_options, "Review the learner's progress and refine learning_journey_phases.md.")
+    )
 
 
 async def _run(opts, prompt):

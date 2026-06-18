@@ -43,7 +43,7 @@ CSS = """
 }
 
 html, body, gradio-app { background: var(--bg) !important; color-scheme: light; }
-.gradio-container { background: var(--bg) !important; max-width: 1180px !important; margin-left: auto !important; margin-right: auto !important; }
+.gradio-container { background: var(--bg) !important; max-width: 1520px !important; margin-left: auto !important; margin-right: auto !important; }
 .gradio-container, .gradio-container * {
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -95,7 +95,7 @@ footer { display: none !important; }
 .pill.comfortable { color: var(--purple); background: rgba(117,57,145,.12); }
 
 /* journey */
-#journey_card .journey-scroll { max-height: 240px; overflow-y: auto; padding-right: 8px; }
+#journey_card .journey-scroll { max-height: 520px; overflow-y: auto; padding-right: 8px; }
 #journey_card .journey-scroll h1, #journey_card .journey-scroll h2, #journey_card .journey-scroll h3 { font-size: .9rem; margin: 12px 0 4px; color: var(--ink); }
 #journey_card .journey-scroll h1 { color: var(--blue); margin-top: 2px; }
 #journey_card .journey-scroll p, #journey_card .journey-scroll li { font-size: .82rem; color: #4b5159; line-height: 1.5; }

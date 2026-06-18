@@ -100,13 +100,14 @@ def build_demo():
     with gr.Blocks(title="Language Tutor") as demo:
         gr.HTML('<div id="app_title">Language <b>Tutor</b></div>')
         session = gr.State(None)
+        # 3 columns side by side when wide enough; min_width lets the journey wrap below on narrow windows.
         with gr.Row(equal_height=False):
-            with gr.Column(scale=2):
+            with gr.Column(scale=3, min_width=440):
                 chat = gr.Chatbot(elem_id="chat", height=560, show_label=False,
                                   value=[{"role": "assistant", "content": GREETING}])
                 box = gr.Textbox(elem_id="msgbox", show_label=False, submit_btn=True,
                                  placeholder="Type in Spanish or English, then Enter...")
-            with gr.Column(scale=1, min_width=330):
+            with gr.Column(scale=2, min_width=300):
                 with gr.Group(elem_id="xp_card", elem_classes="card"):
                     gr.HTML('<div class="card-label">Progress</div>')
                     xp_view = gr.HTML(render_xp())
@@ -116,6 +117,7 @@ def build_demo():
                 with gr.Group(elem_classes="card"):
                     gr.HTML('<div class="card-label">Grammar</div>')
                     grammar_view = gr.HTML(render_grammar())
+            with gr.Column(scale=2, min_width=300):
                 with gr.Group(elem_id="journey_card", elem_classes="card"):
                     gr.HTML('<div class="card-label">Learning journey</div>')
                     journey_view = gr.Markdown(render_journey(), elem_classes="journey-scroll")
