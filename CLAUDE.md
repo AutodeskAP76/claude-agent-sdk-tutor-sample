@@ -1,0 +1,62 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Commands
+
+```bash
+# Install dependencies (requires uv)
+uv sync
+
+# Run any step
+uv run python step1/tutor.py
+uv run python step2/tutor.py
+uv run python step3/tutor.py
+uv run python step4/tutor_app.py
+
+# First-time auth on a fresh machine (no API key needed — uses Claude Code subscription)
+claude setup-token
+```
+
+## Structure
+
+Four progressive steps, each a self-contained runnable script:
+
+| Folder | What's new | Entry point |
+|---|---|---|
+| `step1/` | Bare `query()` loop, single turn | `tutor.py` |
+| `step2/` | File tools + streaming, interactive REPL | `tutor.py` |
+| `step3/` | Background coach via `asyncio.create_task()` | `tutor.py` |
+| `step4/` | Full Gradio app, session resumption, scribe agent | `tutor_app.py` |
+
+Each step creates its own `data/` subfolder (gitignored) for learner state.
+
+## Architecture
+
+### Three-agent design (Step 4)
+
+The core insight: **the conversational tutor has no tools**. Instead of letting it read/write files mid-chat (which would slow replies), it receives a pre-built `learner_brief()` injected into its system prompt at the start of each turn. All bookkeeping is delegated to two background agents:
+
+| Agent | Purpose | `effort` | Runs |
+|---|---|---|---|
+| **Tutor** | Conversation only | `low` | Foreground, streamed |
+| **Scribe** | Updates `vocab.json`, `grammar.json`, `mistakes.json`, `notes_about_student.md` | `low` | Background `asyncio` task after every turn |
+| **Coach** | Rewrites `learning_journey_phases.md` | `high` | Background every `REFINE_EVERY=3` turns |
+
+### Step progression
+
+- **Step 1→2**: add `allowed_tools`, `permission_mode`, `cwd`, `setting_sources=[]`, streaming
+- **Step 2→3**: add a second agent (`coach_options`) launched as `asyncio.create_task()`; the tutor still owns its own files
+- **Step 3→4**: the tutor loses its tools entirely; a dedicated scribe takes over file writes; session continuity via `resume=session_id`; Gradio UI polls `data/` on a `gr.Timer(2.0)` to live-refresh panels
+
+### Session continuity (Step 4)
+
+Multi-turn chat is maintained via `resume=session_id` in `ClaudeAgentOptions`. The `session_id` comes from `SystemMessage(subtype="init")` on the first turn and is threaded through `gr.State` in the UI.
+
+### XP
+
+Computed as a view over scribe-tracked data — `confidence × 10 + count` per vocab word — not a separately tracked value.
+
+### Auth
+
+No `ANTHROPIC_API_KEY` should be set. The SDK drives the `claude` CLI using the user's Claude Code subscription login. If the env var is set, it bills the API instead.

@@ -1,6 +1,6 @@
 # Language Tutor using the Claude Agent SDK
 
-A conversational language tutor built on the [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview). The notebook starts as a simple agent loop and progresses to a small Gradio app with a live vocabulary, grammar, an XP bar and a self-updating learning journey.
+A conversational language tutor built on the [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview). The project is organized as four progressive steps, each introducing one new SDK capability.
 
 ## Setup
 
@@ -17,8 +17,26 @@ A conversational language tutor built on the [Claude Agent SDK](https://code.cla
    ```bash
    uv sync
    ```
-4. **Open `tutor.ipynb`** in VS Code, Cursor, or Jupyter.
-5. **Select the kernel** — choose this project's `.venv` (uv) environment, then run the cells top to bottom. The final step launches the Gradio app locally.
+
+## Steps
+
+| Folder | What's new |
+|---|---|
+| `step1/` | Bare `query()` loop — a model with a persona, ~15 lines |
+| `step2/` | File tools and streaming — the tutor keeps its own notes in `data/` |
+| `step3/` | Background specialist agent — a high-effort coach revises the learning plan concurrently |
+| `step4/` | Full Gradio app — live XP bar, vocab, grammar and journey panels |
+
+Run any step directly:
+
+```bash
+uv run python step1/tutor.py
+uv run python step2/tutor.py
+uv run python step3/tutor.py
+uv run python step4/tutor_app.py
+```
+
+Each step creates its own `data/` folder next to the script, so learner progress is scoped to each step.
 
 ## Authentication
 

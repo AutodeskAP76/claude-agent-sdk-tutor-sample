@@ -20,7 +20,7 @@ from claude_agent_sdk import (
 )
 
 LANGUAGE = "Spanish"
-DATA = Path("data")
+DATA = Path(__file__).parent / "data"
 DATA.mkdir(exist_ok=True)
 
 
