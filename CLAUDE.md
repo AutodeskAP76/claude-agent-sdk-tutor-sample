@@ -50,6 +50,7 @@ The core insight: **the conversational tutor has no tools**. Instead of letting 
 - **Step 1→2**: add `allowed_tools`, `permission_mode`, `cwd`, `setting_sources=[]`, streaming
 - **Step 2→3**: add a second agent (`coach_options`) launched as `asyncio.create_task()`; the tutor still owns its own files
 - **Step 3→4**: the tutor loses its tools entirely; a dedicated scribe takes over file writes; session continuity via `resume=session_id`; Gradio UI polls `data/` on a `gr.Timer(2.0)` to live-refresh panels
+- **Step 4→5**: three major upgrades — (1) **web-based**: Gradio replaced by a FastAPI service + vanilla JS client accessible from any browser; (2) **multi-user sessions**: `TutorSession` class encapsulates all per-user state, replacing module-level globals — each user gets an isolated in-memory session keyed by a UUID; (3) **session-scoped memory**: all data files (`vocab.json`, `grammar.json`, etc.) are written under `data/<session_id>/` so every learner's history is fully isolated and persists across browser refreshes via `localStorage`
 
 ### Session continuity (Step 4)
 
@@ -58,6 +59,12 @@ Multi-turn chat is maintained via `resume=session_id` in `ClaudeAgentOptions`. T
 ### XP
 
 Computed as a view over scribe-tracked data — `confidence × 10 + count` per vocab word — not a separately tracked value.
+
+### Multi-user isolation (Step 5)
+
+Each browser session is fully isolated. On first visit the client calls `POST /session` with no `user_id`, receives a fresh UUID, and stores it in `localStorage`. Subsequent visits reuse the same UUID, resuming the existing session. Different browsers (or private/incognito windows) have separate `localStorage`, so each gets its own UUID and therefore its own session.
+
+Storage is per-session: `TutorSession` writes all data files under `step5/data/<session_id>/`, so scribe and coach agents for concurrent sessions never share or overwrite each other's files.
 
 ### Auth
 
