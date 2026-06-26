@@ -41,7 +41,7 @@ chat_options = ClaudeAgentOptions(
 
 
 def learner_brief():
-    """A compact snapshot of the learner, fed to the tutor so it never reads files mid-chat."""
+    """Read data files in Python and inline them as text appended to the tutor's system prompt each turn — so the tutor needs no file tools and never waits on I/O."""
     level, total, _ = xp_stats()
     words = ", ".join(w.get("es", "") for w in recent_vocab(20)) or "none yet"
     notes = _read("notes_about_student.md")[:800]
@@ -117,7 +117,7 @@ _coach_task = None
 _turns_since_refine = 0
 REFINE_EVERY = 3  # rewrite the learning journey every N messages, not after every one
 
-
+# this is called by the UI after each exchange, but it runs in the background so the chat never waits on file I/O
 def record_exchange(user_msg, reply):
     """Background: update vocab/grammar/mistakes/notes from the latest exchange (one at a time)."""
     global _scribe_task
@@ -125,7 +125,7 @@ def record_exchange(user_msg, reply):
         prompt = f"Learner said: {user_msg}\nTutor replied: {reply}\n\nUpdate the memory files accordingly."
         _scribe_task = asyncio.create_task(_run(scribe_options, prompt))
 
-
+#  this is called by the UI after each exchange, but it runs in the background so the chat never waits on file I/O
 def maybe_refine():
     """Background: refine the learning journey at high effort -- only every REFINE_EVERY messages, one at a time."""
     global _coach_task, _turns_since_refine
@@ -141,6 +141,7 @@ def maybe_refine():
 
 
 async def _run(opts, prompt):
+    """Drive a fire-and-forget agent to completion; we care about its file side-effects, not its output."""
     async for _ in query(prompt=prompt, options=opts):
         pass
 
@@ -148,6 +149,7 @@ async def _run(opts, prompt):
 # --- data readers (the UI renders straight from these) ---
 
 def _read(name):
+    """Read a file from DATA, returning empty string if it doesn't exist yet."""
     p = DATA / name
     return p.read_text() if p.exists() else ""
 
@@ -169,10 +171,12 @@ def recent_vocab(n=10):
 
 
 def grammar_topics():
+    """All grammar topics tracked so far, in insertion order."""
     return _items("grammar.json", "topics")
 
 
 def journey_text():
+    """Raw markdown of the coach-maintained learning plan, empty until the coach has run once."""
     return _read("learning_journey_phases.md")
 
 
