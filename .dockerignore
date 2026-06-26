@@ -1,0 +1,32 @@
+# Virtual environment — dependencies are installed fresh inside the image
+.venv/
+
+# Learner data — ephemeral, should not be baked into the image
+*/data/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Git history — not needed at runtime
+.git/
+.gitignore
+
+# Other steps — only step5 is deployed
+step1/
+step2/
+step3/
+step4/
+
+# Secrets — never bake into the image
+.env
+.env.*
+
+# Claude Code settings contain Windows absolute paths — breaks on Linux
+.claude/settings.json
+.claude/settings.local.json
+
+# IDE and OS files
+.vscode/
+*.DS_Store

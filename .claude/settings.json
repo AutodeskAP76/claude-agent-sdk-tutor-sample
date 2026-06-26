@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(mkdir -p \"c:\\\\AP_Knowledge_base\\\\AI\\\\claude-agent-sdk-tutor-sample\\\\.claude\\\\skills\\\\spanish-tutor\")",
+      "Edit(/.claude/skills/spanish-tutor/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\AP_Knowledge_base\\AI\\claude-agent-sdk-tutor-sample\\.claude\\skills"
+    ]
+  }
+}

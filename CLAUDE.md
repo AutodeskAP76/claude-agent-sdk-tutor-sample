@@ -69,3 +69,7 @@ Storage is per-session: `TutorSession` writes all data files under `step5/data/<
 ### Auth
 
 No `ANTHROPIC_API_KEY` should be set. The SDK drives the `claude` CLI using the user's Claude Code subscription login. If the env var is set, it bills the API instead.
+
+### Docker / containerized deployment — known limitation
+
+The containerized version of step5 **cannot run** without a funded Anthropic API account. Inside a Docker container there is no Claude Code subscription login, so the bundled CLI falls back to `ANTHROPIC_API_KEY` which requires a paid balance on console.anthropic.com. The local version (running directly with `uv run python step5/run.py`) works fine because it authenticates through the Claude Code subscription.
