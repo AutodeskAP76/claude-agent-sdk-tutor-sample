@@ -73,7 +73,8 @@ async def chat(prompt: str) -> None:
                     print(f"\n  · {block.name} {name}".rstrip(), flush=True)
     print()
 
-
+# this is executed on each turn after the tutor's reply, but it runs in the background so the chat never waits on file I/O
+# all the logic of this agent is encapsulated in the system prompt, in options specified, and in the prompt provied here every time it is executed
 async def run_coach() -> None:
     async for _ in query(
         prompt="Review the learner's progress and refine learning_journey_phases.md.",

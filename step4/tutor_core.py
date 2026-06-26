@@ -58,7 +58,7 @@ async def stream_reply(user_msg, session_id):
     """Stream the tutor's reply, yielding (accumulated_text, session_id) as it grows."""
     turn = replace(
         chat_options,
-        system_prompt=TUTOR_PROMPT + learner_brief(),
+        system_prompt=TUTOR_PROMPT + learner_brief(),  # inline the learner's state each turn so the tutor never needs file tools
         include_partial_messages=True,
         resume=session_id,
     )

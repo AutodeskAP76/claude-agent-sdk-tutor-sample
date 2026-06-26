@@ -13,6 +13,7 @@ uv run python step1/tutor.py
 uv run python step2/tutor.py
 uv run python step3/tutor.py
 uv run python step4/tutor_app.py
+uv run python step5/run.py
 
 # First-time auth on a fresh machine (no API key needed — uses Claude Code subscription)
 claude setup-token
@@ -20,7 +21,7 @@ claude setup-token
 
 ## Structure
 
-Four progressive steps, each a self-contained runnable script:
+Five progressive steps, each a self-contained runnable script:
 
 | Folder | What's new | Entry point |
 |---|---|---|
@@ -28,6 +29,7 @@ Four progressive steps, each a self-contained runnable script:
 | `step2/` | File tools + streaming, interactive REPL | `tutor.py` |
 | `step3/` | Background coach via `asyncio.create_task()` | `tutor.py` |
 | `step4/` | Full Gradio app, session resumption, scribe agent | `tutor_app.py` |
+| `step5/` | FastAPI web service, per-user TutorSession, SSE streaming, vanilla JS client | `tutor_api.py` |
 
 Each step creates its own `data/` subfolder (gitignored) for learner state.
 

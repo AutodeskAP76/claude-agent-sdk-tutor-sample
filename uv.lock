@@ -1878,9 +1878,11 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "claude-agent-sdk" },
+    { name = "fastapi" },
     { name = "gradio" },
     { name = "ipykernel" },
     { name = "ipywidgets" },
+    { name = "uvicorn" },
 ]
 
 [package.dev-dependencies]
@@ -1891,9 +1893,11 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "claude-agent-sdk", specifier = ">=0.2.104" },
+    { name = "fastapi", specifier = ">=0.115.0" },
     { name = "gradio", specifier = ">=6.19.0" },
     { name = "ipykernel", specifier = ">=7.3.0" },
     { name = "ipywidgets", specifier = ">=8.1.8" },
+    { name = "uvicorn", specifier = ">=0.30.0" },
 ]
 
 [package.metadata.requires-dev]
